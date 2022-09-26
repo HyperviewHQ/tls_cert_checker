@@ -29,8 +29,6 @@ fn main() -> Result<()> {
 
     let args = Args::parse();
 
-    println!("{:?}", args);
-
     let data_lines = match File::open(args.input_filename) {
         Ok(file) => io::BufReader::new(file).lines(),
         Err(e) => {
