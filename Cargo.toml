@@ -9,9 +9,9 @@ edition = "2021"
 anyhow = "1.0.65"
 clap = { version = "4.1.8", features = ["derive"] }
 csv = "1.1.6"
-env_logger = "0.10.0"
+env_logger = "0.11.3"
 log = "0.4.17"
 openssl = "0.10.41"
 serde = { version = "1.0.145", features = ["derive"] }
 thiserror = "1.0.36"
-x509-parser = "0.15.0"
+x509-parser = "0.16.0"
