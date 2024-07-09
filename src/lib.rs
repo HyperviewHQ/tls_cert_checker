@@ -1,8 +1,9 @@
+use log::info;
+use serde::Serialize;
 use std::{
     net::{TcpStream, ToSocketAddrs},
     time::Duration,
 };
-use serde::Serialize;
 use thiserror::Error;
 use x509_parser::prelude::{FromDer, X509Certificate};
 
@@ -108,6 +109,20 @@ pub fn get_cert_info(hostname: String) -> Result<CertInfo, CertCheckerError> {
     cert_info.subject = peer_cert.subject().to_string();
     cert_info.valid_not_before = peer_cert.validity.not_before.to_rfc2822().unwrap();
     cert_info.valid_not_after = peer_cert.validity.not_after.to_rfc2822().unwrap();
+
+    info!(">>> {}", cert_info.hostname);
+    if let Ok(Some(s)) = peer_cert.subject_alternative_name() {
+        for host in &s.value.general_names {
+            match host {
+                x509_parser::extensions::GeneralName::DNSName(n) => {
+                    info!("-- {}", n);
+                }
+                _ => {
+                    info!(">> {}", host)
+                }
+            }
+        }
+    }
 
     // shutdown connection
     tls_stream.shutdown().unwrap();

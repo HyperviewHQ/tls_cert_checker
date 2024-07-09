@@ -29,7 +29,7 @@ fn main() -> Result<()> {
 
     let args = Args::parse();
 
-    let data_lines = match File::open(args.input_filename) {
+    let mut data_lines = match File::open(args.input_filename) {
         Ok(file) => io::BufReader::new(file).lines(),
         Err(e) => {
             error!("Error opening input file: {}", e);
@@ -39,15 +39,13 @@ fn main() -> Result<()> {
 
     let mut hostnames: Vec<String> = Vec::new();
 
-    for line in data_lines {
-        if let Ok(x) = line {
-            let entry = x.trim().to_string();
-            if entry.len() > 3 {
-                info!("hostname {} read from input", entry);
-                hostnames.push(entry);
-            } else {
-                warn!("potentially malformed hostname: {}", entry);
-            }
+    while let Some(Ok(x)) = data_lines.next() {
+        let entry = x.trim().to_string();
+        if entry.len() > 3 {
+            info!("hostname {} read from input", entry);
+            hostnames.push(entry);
+        } else {
+            warn!("potentially malformed hostname: {}", entry);
         }
     }
 
@@ -68,7 +66,7 @@ fn main() -> Result<()> {
     match write_output(args.output_filename, cert_info) {
         Ok(()) => {
             info!("hostname certificate data written to output");
-        },
+        }
         Err(e) => {
             error!("error writing data to output file: {}", e);
         }
